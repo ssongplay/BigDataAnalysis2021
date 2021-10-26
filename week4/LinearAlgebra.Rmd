@@ -1,0 +1,273 @@
+---
+title: "Linear Algebra"
+subtitle: "빅데이터분석실무 4주차"
+author: "ssongplay"
+date: "`r format(Sys.Date())`"
+output:
+  html_document: 
+    fig_height: 6
+    fig_width: 10
+    highlight: zenburn
+    theme: readable
+    toc: yes
+    toc_float: yes
+  pdf_document:
+    fig_height: 6
+    fig_width: 10
+    toc: no
+  word_document: 
+    fig_height: 6
+    fig_width: 9
+---
+
+# 벡터끼리의 덧셈
+
+```{r}
+# 벡터끼리의 덧셈
+X = c(1, 3, 5)
+Y = c(2, -1, 0)
+X + Y
+```
+
+### 벡터끼리의 덧셈 : 시각화 in R\* (matlib library)
+
+```{r}
+library(matlib)  # matlib library setting
+
+# 플롯 기본 셋팅
+xlim <- c(0,6)
+ylim <- c(0,6)
+plot(xlim, ylim, type="n", xlab="X1", ylab="X2", asp=1)
+grid()
+
+# define some vectors
+a = c(4,2)
+b = c(1,3)
+
+# vector plotting (vectors 함수 활용)
+vectors(b, labels="b", pos.lab=4, frac.lab=.5, col="green")
+vectors(a, labels="a", pos.lab=4, frac.lab=.5)
+vectors(a+b, labels="a+b", pos.lab=4, frac.lab=.5, col="red")
+```
+
+# 벡터의 길이 (피타고라스의 정리)
+
+```{r}
+# x가 (3,5), y가 (1,2)일때 빗변의 길이
+x = c(3, 5)
+y = c(1, 2)
+y_x = sqrt((3-1)^2 + (5-2)^2)
+y_x
+```
+
+# 벡터의 각
+
+-   벡터의 각은 곧, 두 벡터간의 관계를 의미!
+-   만약 A벡터와 B 벡터가 이루는 각이 90° ? 270° ? \> 서로 독립적인 벡터
+-   반대로 이루는 각이 0° ? 180° ? \> 서로 관계가 깊은 벡터
+-   그래서 cos θ를 통해 벡터간의 관계를 파악 가능!!
+-   Let's try a(0,4), b(5,0) ? a & b 두 벡터의 각은 ?
+
+```{r}
+a = c(0,4)
+b = c(5,0)
+a%*%b/(sqrt(a%*%a) %*% sqrt(b%*%b))
+```
+
+# 벡터의 내적 (inner product)
+
+-   내적의 정의
+-   $$
+     \vec{a} \, \cdot\, \vec{b} = |\vec{a}|*|\vec{b}|*\cos\theta
+    $$
+-   즉, 두 벡터의 크기 (norm)와 이루는 각의 코사인 곱을 통한 연산
+-   벡터와 벡터의 곱이지만 값은 실수(스칼라) 하나로 나옴
+-   각의 주는 의미와 마찬가지로 결국 두 벡터의 연관성을 표현 (그래서 다변량으로 표현되는 머신러닝/데이터분석의 세계에서 매우 중요)
+
+```{r}
+a = c(2,4)
+b = c(3,1)
+cos_theta = a%*%b/(sqrt(a%*%a) %*% sqrt(b%*%b)) 
+length_a = sqrt(2^2 + 4^2)
+length_b = sqrt(3^2 + 1^2)
+length_a * length_b * cos_theta
+```
+
+-   내적의 선형대수 정의
+
+-   $$
+    a^{T}b
+    $$
+
+### cosine 함수 그려보기
+
+-   $$
+     \cos\theta=0.7일때 \theta는?
+    $$
+
+```{r}
+res = matrix(0, 980, 1)  # 결과 저장
+for(i in 1:980){ # 각도를 키워가며 코사인 값 계산
+  res[i,1] = cos(i*pi/180) # 수치를 각도로 변환
+}
+plot(res, type = "l")
+which(res <= 0.7)  # 0.7보다 처음으로 작아지는 값?
+```
+
+# Transpose
+
+```{r}
+a = matrix(c(2,0,1,1,3,-1), nrow=2)
+a
+```
+
+```{r}
+a_t = t(a)
+a_t
+```
+
+# 행렬간 합
+
+```{r}
+a = matrix(c(1, 4, 2, 5, 3, 6), nrow = 2)
+a
+```
+
+```{r}
+b = matrix(c(0, 2, 1, -1, 0, 5), nrow = 2)
+b
+```
+
+```{r}
+mat_sum = a + b
+mat_sum
+```
+
+# 행렬에 스칼라 곱
+
+```{r}
+c1 = 2
+A = matrix(c(1, 2, 0, 5), nrow=2)
+c1 * A
+```
+
+# 행렬끼리의 곱
+
+```{r}
+A = matrix(c(3, 4, -1, 0, 2, 5), nrow = 2)
+B = matrix(c(3, 6, 4, 4, -2, 3), nrow = 3)
+C = A %*% B
+C
+```
+
+# Determinant
+
+-   Volume of a matrix
+
+-   역행렬의 존재를 확인하는 도구로써 활용 (1/det(A))
+
+```{r}
+A = matrix(c(1, 6, 3, 4), nrow = 2)
+det(A)
+```
+
+```{r}
+B = matrix(c(3, 7, 2, 1, 4, -7, 6, 5, 1), nrow = 3)
+det(B)
+```
+
+# Inverse
+
+-   숫자의 세계에는 역수라는 개념 존재 (분모와 분자가 뒤집힌 형태)
+
+-   역수는 어떤 숫자가 곱했을 때 , 자기자신(즉, 항등원)인 1이 나오게하는 수
+
+-   행렬에는 역행렬이 그런 역할을 해줌. 즉 나누기의 역할을 위한 행렬이라고 보면 됨
+
+-   행렬의 항등원은 바로 I (Identity matrix, 대각행렬이 1로만 채워진 행렬)
+
+-   가장 대표적인 활용 : linear equation
+
+-   AX = Y라는 문제를 X = A\^-1 Y 형태로 변환하여 쉽게 X를 구할 수 있다
+
+-   R 에서는 `solve` 함수를 활용. 혹은 pracma 라이브러리의 `Inv()` 함수
+
+```{r}
+mat = matrix(c(2, 4, 3, 1, 3, 2, 4, 5, 1, 2, 3, 4, 1, 1, 2, 4), nrow = 4)
+mat
+solve(mat)
+library("pracma")
+inv(mat)
+```
+
+```{r}
+mat %*% inv(mat)
+```
+
+# Trace (대각 행렬 원소들의 합)
+
+```{r}
+A = matrix(c(1, 3, 2, 4), nrow=2)
+A_T = t(A)
+sum(diag(A%*%A_T))
+```
+
+# Vector의 norm
+
+-   "거리"
+
+-   벡터 혹은 행렬의 크기를 표현하는 단위
+
+-   R에서는 `pracma` package의 `Norm()` 함수를 통해 사용
+
+-   벡터나 매트릭스의 크기나 강도, 대표값 등을 알기 어렵기 때문에 하나의 값으로 정의해서 파악하기 위함
+
+```{r}
+v = c(1, 2, 1)
+v
+Norm(v, p=2)
+```
+
+```{r}
+P = matrix(c(2, 4, 3, 2), ncol=2)
+P
+Norm(P, p=1)
+```
+
+# Eigenvalue & Eigenvector
+
+-   고유값과 고유벡터
+
+-   Eigenvector : A를 선형변환 했을 때, 변환결과가 자기 자신의 상수배가 되는 0이 아닌 벡터
+
+-   Eigenvalue : 상수배값
+
+-   $$
+    Av = \lambda v
+    $$
+
+-   $$
+    A = v \lambda\ v^{-1}
+    $$ 로 표현하면 행렬 A는 자신의 고유벡터들을 열벡터로 하는 행렬과 고유값을 대각원소로 하는 행렬의 곱으로 분해가 가능 --\> "고유값 분해"
+
+-   고유값 분해로 행렬의 다양한 연산을 손쉽게 계산 가능
+
+-   Trace(A) = λ1+ λ2+ λ3......
+
+-   PCA(주성분분석) : eigenvalue decomposition을 활용하여 데이터를 효과적으로 축약해주는 방식
+
+-   특성화 방정식 det(A- λI)
+
+-   A- λI = 0 : 고유벡터 존재 조건
+
+-   R에서 `eigen` 함수를 이용하여 구함
+
+```{r}
+mat = matrix(c(5, 25, 35, 25, 166, 175, 35, 175, 325), ncol = 3)
+mat
+```
+
+```{r}
+eanalysis = eigen(mat, symmetric = T)  # mat가 대칭 행렬인지 test
+eanalysis
+```
