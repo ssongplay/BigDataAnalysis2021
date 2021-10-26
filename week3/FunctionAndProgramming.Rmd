@@ -1,0 +1,295 @@
+---
+title: "Function and Programming"
+subtitle: "빅데이터분석실무 3주차"
+author: "ssongplay"
+date: "`r format(Sys.Date())`"
+output:
+  html_document: 
+    fig_height: 6
+    fig_width: 10
+    highlight: zenburn
+    theme: readable
+    toc: yes
+    toc_float: yes
+  pdf_document:
+    fig_height: 6
+    fig_width: 10
+    toc: no
+  word_document: 
+    fig_height: 6
+    fig_width: 9
+---
+
+# 프로그래밍에서 함수란?
+
+-   일반적으로 함수는 x를 y에 대응시키는 것
+
+-   프로그래밍에서 함수(function)란 하나의 로직을 재실행 할 수 있도록 하는 것
+
+-   입력값(ex. 변수 1, 변수 2, 변수 3...)을 받아서 계산 또는 작업을 한 뒤, 결과값을 돌려주는 프로그램의 단위를 지칭
+
+# 기초적인 함수 만들어보기
+
+```{r}
+# 1부터 N까지 더하기
+sum1toN = function(N){
+  result = sum(1:N)
+  return(result)
+}
+
+sum1toN(100)
+```
+
+```{r}
+# x, y, z 값을 제곱하고 서로 더한 후, root 취하기
+sqrt_sum = function(x,y,z){
+  result = sqrt(x^2 + y^2 + z^2)
+  return(result)
+}
+
+sqrt_sum(4, 55, 14)
+```
+
+```{r}
+# 첫번째와 두번째 함수를 같이 써보기
+sqrt_sum2 = function(x,y,z){
+  result = sqrt(x^2 + y^2 + z^2)
+  result2 = sum1toN(as.integer(result))
+  return(result2)
+}
+
+sqrt_sum2(1,2,3)
+
+```
+
+# for / while (반복문)
+
+-   for문은 요소별 반복 / while은 조건을 붙인 반복
+
+-   즉, for는 준비한 요소가 소모될 때까지 반복하며, while은 조건이 더이상 "참"이 아니게 될 경우까지 반복
+
+-   for 문의 일반 형태
+
+    ``` {.r}
+    for(index in vector){
+      i 가 들어있는 반복 code
+    }
+    ```
+
+<!-- -->
+
+-   while문의 일반 형태
+
+    ``` {.r}
+    while(loop_condition){
+      code~
+    }
+    ```
+
+-   서로 유사한 역할을 수행함
+
+-   문제에 따라 while이 효율적인 경우 존재
+
+```{r}
+for(i in 1:10){print(i)}
+```
+
+```{r}
+number = 1
+while(number <= 10){
+  print(number)
+  number = number + 1
+}
+```
+
+-   중첩 for문 만들어야 하는 경우 (시간 오래걸림)
+
+``` {.r}
+for(index in vector){
+  for(index2 in vector2){
+    code
+  }
+}
+```
+
+--\> 이러한 반복적인 방법은 컴퓨터의 탐색 알고리즘과 머신러닝 알고리즘의 구성에서 매우 중요
+
+-   ex) 특정 조건을 만족할 때까지 해를 대입하라
+
+-   그런데 이런 반복문들이 매우 귀찮은 경우가 존재한다. 이를 해결하기 위해 R에서는 apply 라는 내장 함수를 활용
+
+# apply (반복문)
+
+-   특정 명령을 반복 실행하는 대표적인 내장함수
+
+-   matrix, array, dataframe의 행이나 열에 함수를 적용, 그 결과를 구할 때 활용
+
+```{r}
+A = matrix(1:12, nrow = 4, byrow = T)
+print(A)
+```
+
+```{r}
+apply(X = A, MARGIN = 1, FUN = sum)  # margin = 1 은 row 방향으로 다 더하라(sum)는 의미
+```
+
+```{r}
+apply(X = A, MARGIN = 2, FUN = sum)  # margin = 2 는 column 방향으로 다 더하라(sum)는 의미
+```
+
+```{r}
+apply(A, 1, sum)
+apply(A, 2, sum)
+```
+
+-   여러 배열(array)들에 대해 연산도 가능
+
+```{r}
+B = array(1:18, dim = c(3, 3, 2)) # 3x3 배열 2개 (총 18개 element)를 만듦
+print(B)
+```
+
+-   각 배열에 대해 원하는 연산/추출 가능
+
+```{r}
+apply(B, 3, diag)
+```
+
+-   유사한 기능으로 lapply(리스트에), tapply(factor에), sapply(lapply와 유사) ...
+
+# if/else (조건문)
+
+-   if문은 특정 조건(condition)이 참(true)이면 그 다음 코드를 실행하고 그렇지 않으면(false) else 다음에 나오는 코드를 실행
+
+    ``` {.r}
+    if(condition){
+      code1
+    } else{
+      code2
+    }
+    ```
+
+```{r}
+# ex. 홀수/짝수 출력하기
+for(i in 1:10){
+  if(i%%2 == 0){
+    print("짝수")
+  }
+  else{
+    print("홀수")
+  }
+}
+```
+
+-   `ifelse` 를 활용하면 단일 논리값이 아닌 경우에도 활용 가능
+
+    ``` {.r}
+    ifelse(condition, yes = a, no = b)
+    ```
+
+```{r}
+x = 3
+y = -5:5
+ifelse(x>y, 1, 0)
+```
+
+-   True - 1, False= 0으로 인식되기에 더하거나 뺄 수 있음
+
+-   향후 특정 조건에 해당되는 데이터의 개수를 count 할 시 유용
+
+```{r}
+TRUE - TRUE
+TRUE - FALSE
+FALSE - TRUE
+FALSE- FALSE
+```
+
+# 쉬운 함수를 만들어 마약범죄 소탕하기! (1차 온라인과제)
+
+```{r}
+# 범죄 현장 좌표 (x, y)
+x = c(2, 5, 5, 5, 1, 5, 7, 4, 5, 6)
+y = c(0, 4, 1, 2, 8, 9, 5, 2, 4, 1)
+
+# 마약 거래상 (A, B, C)의 정보
+col1 = c(1, 4, 8) # x좌표
+col2 = c(5, 7, 1) # y좌표 
+col3 = c(5, 1, 3) # 범죄 이력 
+
+# 범죄현장 좌표(site)와 마약거래상의 정보(seller) 
+site = data.frame(site=seq(10),x, y)
+seller = data.frame(seller=seq(3),col1, col2, col3)
+site = as.matrix(site)
+seller = as.matrix(seller)
+
+# 거래상(seller)과 거래장소(site)의 거리를 계산하는 함수
+distance = function(seller, site){
+  dist_mat = matrix(0, 10, 1)
+  for(i in 1:10){
+    # 유클리디안 거리
+    temp = sqrt((seller-site[i,1:2])%*%t(t(seller-site[i,1:2])))
+    dist_mat[i,1] = temp
+  }
+  return(dist_mat)
+}
+
+# 산출된 거리를 각각의 거래상의 과거 전과의 숫자로 나눔
+result_A = distance(seller[1,2:3],site[,2:3])/seller[1,4]
+result_B = distance(seller[2,2:3],site[,2:3])/seller[2,4]
+result_C = distance(seller[3,2:3],site[,2:3])/seller[3,4]
+
+# 거리를 전과의 숫자로 나눈 값 중 가장 작은 값을 찾는 함수
+# 거래상들을 범죄 현장과 할당하여 return (A=1, B=2, C=3)
+who = function(seller){
+  who_mat = matrix(0, 10, 1)
+   for(i in 1:10){
+     if(result_A[i,1] < result_B[i,1]){
+       if(result_A[i,1] < result_C[i,1])
+         who_mat[i,1] = 1  #A
+       else
+         who_mat[i,1] = 3  #C
+     }
+     else{
+       if(result_B[i,1] < result_C[i,1])
+         who_mat[i,1] = 2  #B
+       else
+         who_mat[i,1] = 3  #C
+     }
+   }
+  return(who_mat)
+}
+
+who(seller)
+```
+
+```{r}
+# x, y 좌표가 주어졌을 때, A, B, C중 어떤 거래상인지 찾아내는 함수
+catch = function(x,y){
+  catch_mat = matrix(0, 3, 1)
+  xy_mat = matrix(c(x, y), nrow=1, ncol=2, byrow=T)
+  # (x,y)와 각 거래상과의 거리를 전과 숫자로 나눈 값을 산출
+  for(i in 1:3){
+    temp = sqrt((seller[i,2:3]-xy_mat[,1:2])%*%t(t(seller[i,2:3]-xy_mat[,1:2])))/seller[i,4]
+    catch_mat[i,1] = temp
+  }
+  # 가장 작은 값을 구하여 거래상 할당
+  if(catch_mat[1,1] < catch_mat[2,1]){
+    if(catch_mat[1,1] < catch_mat[3,1])
+      result = 1  #A
+    else
+      result = 3  #C
+  }
+  else{
+    if(catch_mat[2,1] < catch_mat[3,1])
+      result = 2  #B
+    else
+      result = 3  #C
+  }
+  return(result)
+}
+
+#TEST 
+catch(8,1)  # 할당 결과 : C
+catch(1,5)  # 할당 결과 : A
+catch(4,7)  # 할당 결과 : B
+```

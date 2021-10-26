@@ -1,0 +1,267 @@
+---
+title: "R basic"
+subtitle: "빅데이터분석실무 3주차"
+author: "ssongplay"
+date: "`r format(Sys.Date())`"
+output:
+  html_document: 
+    fig_height: 6
+    fig_width: 10
+    highlight: zenburn
+    theme: readable
+    toc: yes
+    toc_float: yes
+  pdf_document:
+    fig_height: 6
+    fig_width: 10
+    toc: no
+  word_document: 
+    fig_height: 6
+    fig_width: 9
+---
+
+# Vector
+
+-   R의 가장 기본적인 데이터 구조 : element의 순서 있는 집합으로 구성
+
+-   행 벡터 / 열 벡터
+
+-   integer, numeric, character, logical 유형
+
+```{r}
+# 벡터의 선언 
+이름 = c("유비", "관우", "제갈량")
+print(이름)
+```
+
+```{r}
+# 벡터의 주소 
+이름[1]
+```
+
+```{r}
+# 벡터의 주소 : 범위 호출
+이름[2:3]
+```
+
+```{r}
+# 벡터의 주소 : 특정 주소 제외
+이름[-1]
+이름[-2]
+```
+
+```{r}
+# 벡터의 주소 : 논리 벡터
+이름[c(TRUE, TRUE, FALSE)]
+```
+
+R에서 벡터를 만들어주는 기본 명령 `c` , `seq`
+
+```{r}
+# c : 필요한 숫자나 문자를 콤마로 구분하여 넣어주면 됨
+Vec = c(1,3,5,7,9)
+print(Vec)
+```
+
+```{r}
+# seq함수 : sequence를 만들어주는 함수
+seq(10)
+1:10
+```
+
+```{r}
+# 특정 단위를 갖는 sequence를 만들 때 (ex. -5부터 5까지 0.5씩 증가)
+# seq(from = 0, to= 100, by = 1)
+seq(-5, 5, by = 0.5)
+```
+
+# List
+
+-   데이터 입출력의 다양한 타입을 저장하는 용도
+
+```{r}
+# 벡터를 활용한 경우
+이름 = c("유비", "관우", "제갈량")
+무력 = c(70, 99, 40)
+지력 = c(80, 70, 100)
+직업 = c("군주", "장군", "군사")
+# "유비"에 대해 알아볼 경우
+print(c(이름[1], 무력[1], 지력[1], 직업[1]))
+```
+
+```{r}
+# 리스트를 활용한 경우
+유비 = list(
+  이름 = 이름[1],
+  무력 = 무력[1], 
+  지력 = 지력[1],
+  직업 = 직업[1]
+)
+
+유비
+```
+
+```{r}
+유비$지력 
+```
+
+# Data frame
+
+-   R 데이터 분석의 가장 중요한 데이터 구조
+
+-   행과 열벡터를 모두 포함 (엑셀 스프레드시트와 유사)
+
+-   Data.frame 함수 활용
+
+```{r}
+삼국인물 = data.frame(이름, 무력, 지력, 직업)
+삼국인물
+```
+
+-   행은 인물들을, 열은 인물들의 특징과 직업을 표시하는 구조 (데이터의 기본 구조)
+
+```{r}
+# 행벡터
+삼국인물[1,]
+```
+
+```{r}
+# 열벡터
+삼국인물[,1]
+```
+
+```{r}
+# 영역별 호출 가능
+삼국인물[2:3, 2:4]
+```
+
+# Matrix
+
+-   데이터프레임과 같이 표 형태의 값을 저장하는 구조
+
+-   행과 열로 표현되며 전형적인 수치데이터만을 저장함 (차후, 수학적 연산에 적극활용)
+
+```{r}
+# 2x2 matrix 만들기
+mat = matrix(c(1,2,3,4), nrow = 2)
+mat
+```
+
+```{r}
+# 3x2 matrix 만들기
+mat = matrix(c(1,2,3,4,5,6), ncol = 2)
+mat
+```
+
+```{r}
+# 결과 저장을 위한 0 매트릭스 (10x1) 만들기
+mat = matrix(0, nrow = 10, ncol = 1)
+mat
+```
+
+# Index
+
+-   데이터의 분석은 기본적으로 행렬이나 벡터, 데이터프레임 등에 대해 처리할 일이 아주 많음
+
+-   특정 위치를 나타내는 index를 활용, 원하는 요소들 (관측치, 변수) 등을 선택
+
+-   기본적으로 true/false 세계에 익숙해져야 함
+
+```{r}
+# 1부터 10까지의 숫자 중, 5보다 큰 수는?
+seq(10) > 5
+# 6, 7, 8, 9, 10에 대해 TRUE라는 값을 갖게됨
+```
+
+```{r}
+# 6~10에 대한 index 정보를 가지고 요소 선택에 활용 가능
+sel = seq(10) > 5
+df = c("유비", "관우", "장비", "제갈량", "조운", "마초", "황충", "위연", "강유", "미축")
+df[sel]
+```
+
+-   matrix와 data frame의 경우 [행, 열] 로 표현
+
+```{r}
+mat = matrix(df, 5, 2)
+mat
+```
+
+```{r}
+mat[5, 1]
+```
+
+# 데이터 유형 확인 및 변환 (Matrix to Dataframe / Frame to Matrix)
+
+```{r}
+# class 함수를 이용하여 iris 데이터(객체)의 구조 확인(DataFrame)
+df = iris
+class(df)
+```
+
+```{r}
+# Typeof 함수를 이용하여 matrix를 구성하는 벡터의 유형 확인
+typeof(df[,5])
+```
+
+-   Mode 함수도 비슷한 역할
+
+-   as.matrix / as.dataframe등을 활용 데이터의 유형 변경
+
+-   as.integer / as.numeric 등을 활용 벡터의 유형 변경
+
+-   데이터프레임은 데이터의 전처리, 머신러닝 모델 적용에 주로 활용되며 매트릭스/벡터의 유형은 수학적 기법의 적용 특히, 선형대수적 적용에 많이 활용됨 (벡터화는 수학적 연산을 빠르게 해줌)
+
+# 데이터의 읽기/확인/저장 (read/head/names)
+
+-   컴퓨터에 저장된 csv, txt, rds 파일을 읽어보자
+
+-   read.csv("파일 경로/데이터.csv")의 형태로 구성
+
+-   read.csv/read.table(txt), read(RDS) (RDS 파일)
+
+```{r}
+# head() : 원하는 수의 row 확인 가능
+head(df, 10)
+```
+
+```{r}
+# names() : 변수의 종류 확인
+names(df)
+```
+
+```{r}
+# str() : 데이터의 전체 구조 확인
+str(iris)
+```
+
+```{r}
+# summary() : 데이터에 대한 전체적인 통계량 가늠
+summary(iris)
+```
+
+-   summary 값은 table로 저장되기에 언제든지 필요한 정보 추출 가능
+
+```{r}
+summary(iris)[1,2]
+```
+
+-   fix()/View() 함수를 활용하여 데이터 전체를 볼 수 있음
+
+```{r}
+fix(df)
+```
+
+```{r}
+View(df)
+```
+
+-   데이터의 크기 확인은 dim(), nrow(), ncol(), length(벡터) 등을 활용
+
+```{r}
+dim(iris)
+```
+
+-   작업이 끝난 데이터 저장은 write.csv() / write.table / saveRDS() 등으로 저장
+
+-   Ex ) Write.csv(iris, "d:/data/iris.csv")
