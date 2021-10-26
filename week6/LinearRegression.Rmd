@@ -1,0 +1,116 @@
+---
+title: "Linear Regression"
+subtitle: "빅데이터분석실무 6주차"
+author: "ssongplay"
+date: "`r format(Sys.Date())`"
+output:
+  html_document: 
+    fig_height: 6
+    fig_width: 10
+    highlight: zenburn
+    theme: readable
+    toc: yes
+    toc_float: yes
+  pdf_document:
+    fig_height: 6
+    fig_width: 10
+    toc: no
+  word_document: 
+    fig_height: 6
+    fig_width: 9
+---
+
+# Linear Regression 실습
+
+
+```{r}
+# 자동차 무게를 예측하는 문제
+data = datasets::mtcars
+names(data)
+```
+
+```{r}
+head(data)
+```
+```{r}
+plot(data$mpg, data$wt)
+```
+
+```{r}
+plot(data$hp, data$wt)
+```
+
+```{r}
+cor(data)
+```
+
+```{r}
+cov(data)
+```
+
+```{r}
+df = data[,1:6]
+names(df)
+```
+
+```{r}
+model = lm(df$wt ~ df$mpg + df$cyl + df$disp + df$hp + df$drat, data = df)
+model
+```
+
+```{r}
+sum(model$residuals^2)  #최적값값
+```
+
+```{r}
+model$coefficients
+```
+
+```{r}
+model$fitted.values
+```
+
+```{r}
+plot(df$wt, model$fitted.values)
+```
+
+
+```{r}
+summary(model)
+```
+
+```{r}
+typeof(df)
+class(df)
+```
+
+```{r}
+# R에서 다루기 쉽도록 df 를 matrix로 바꿈
+x = as.matrix(df[,1:5])
+class(x)
+```
+
+```{r}
+y = as.vector(df[,6])
+class(y)
+```
+
+```{r}
+x = cbind(matrix(1,nrow = nrow(x)), x)
+x
+```
+
+```{r}
+hat = solve(t(x) %*% x) %*% (t(x) %*% y)
+print(hat)
+```
+
+```{r}
+model$coefficients
+```
+
+```{r}
+yhat = x%*%hat
+plot(model$fitted.values, yhat)
+```
+
