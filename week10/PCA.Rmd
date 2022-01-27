@@ -1,0 +1,62 @@
+---
+title: "PCA"
+subtitle: "빅데이터분석실무 10주차"
+author: "ssongplay"
+date: "`r format(Sys.Date())`"
+output:
+  html_document: 
+    fig_height: 6
+    fig_width: 10
+    highlight: zenburn
+    theme: readable
+    toc: yes
+    toc_float: yes
+  pdf_document:
+    fig_height: 6
+    fig_width: 10
+    toc: no
+  word_document: 
+    fig_height: 6
+    fig_width: 9
+---
+
+```{r}
+df = iris
+
+# 데이터를 매트릭스로 변환
+df = as.matrix(scale(df[,1:4]))
+
+cov(df)
+
+```
+
+```{r}
+res = matrix(0, 4, 4)
+for (i in 1:nrow(df)){
+  temp = df[i,]%*%t(df[i,])
+  res = res + temp
+}
+res/150
+```
+
+# Eigenvalue Decomposition으로 PC 구하기 
+
+```{r}
+# r의 princomp 함수와 비교해보기
+eig = eigen(cov(df))
+eig
+```
+
+```{r}
+pc = princomp(df)
+summary(pc)
+```
+
+```{r}
+plot(pc$scores[,1], pc$scores[,2])
+```
+
+```{r}
+biplot(pc)
+```
+
